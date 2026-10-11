@@ -55,10 +55,7 @@ const url = (l: Locale) => new URL(localizedPath(l, path), SITE).href;
       <div class="wrap bar">
         <a class="wordmark" href={localizedPath(locale, '/')}>
           <span class="han">粵</span>
-          <span>
-            {t.app.title}
-            <small>Lagarrue · GoT · 1900</small>
-          </span>
+          <span>{t.app.title}</span>
         </a>
         <nav>
           {NAV.map((n) => (

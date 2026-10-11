@@ -104,7 +104,7 @@ body::after {
   display: flex;
   align-items: baseline;
   gap: 28px;
-  padding: 20px 0 18px;
+  padding: 10px 0 9px;
   flex-wrap: wrap;
 }
 .wordmark {
@@ -124,15 +124,6 @@ body::after {
   font-weight: 400;
   color: var(--primary);
   font-size: 1.28rem;
-}
-.wordmark small {
-  display: block;
-  font-family: var(--f-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--on-dark-soft);
-  font-weight: 400;
 }
 .masthead nav {
   display: flex;
@@ -734,9 +725,6 @@ footer.site p {
   .wordmark {
     font-size: 1rem;
   }
-  .wordmark small {
-    display: none;
-  }
 }
 
 /* 长文页（About / Introduction）的阅读排版 */
@@ -798,12 +786,6 @@ body.shell {
 }
 body.shell .masthead {
   flex: 0 0 auto;
-}
-body.shell .masthead .bar {
-  padding: 10px 0 9px;
-}
-body.shell .wordmark small {
-  display: none;
 }
 body.shell main {
   flex: 1;
