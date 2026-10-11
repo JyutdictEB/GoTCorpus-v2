@@ -45,9 +45,10 @@ const url = (l: Locale) => new URL(localizedPath(l, path), SITE).href;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={url(locale)} />
-    {LOCALES.filter((l) => l !== locale).map((l) => (
+    {LOCALES.map((l) => (
       <link rel="alternate" hreflang={HTML_LANG[l]} href={url(l)} />
     ))}
+    <link rel="alternate" hreflang="x-default" href={url(LOCALES[0])} />
   </head>
   <body class:list={[{ shell }]}>
     <header class="masthead">
