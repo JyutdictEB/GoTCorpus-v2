@@ -10,6 +10,8 @@ export default {
     project: 'Project',
     toc: 'On this page',
     footer: 'Digitized from the 1900 edition',
+    themeToggle: 'Toggle theme',
+    menu: 'Menu',
     legend: 'Provenance',
     legendGoogle: 'Google Translate',
     legendDeepl: 'DeepL',
@@ -18,6 +20,7 @@ export default {
   },
   app: {
     title: "Lagarrue's GoT Cantonese Online Corpus",
+    shortTitle: 'GoT Corpus',
   },
   common: {
     search: 'Search',

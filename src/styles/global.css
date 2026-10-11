@@ -23,6 +23,10 @@
   --dark-elev: #252320;
   --on-dark: #faf9f5;
   --on-dark-soft: #a09d96;
+  --on-dark-line: #3a3733;
+  --surface-page: #ffffff;
+  --on-primary: #ffffff;
+  --shadow-panel: 0 14px 34px rgba(20, 20, 19, 0.11);
 
   /* —— 溯源色：把「这条译文从哪来」变成视觉语言 —— */
   --prov-google: #6b7f8c;
@@ -56,6 +60,38 @@
 
   --measure: 1240px; /* 站点容器宽度 */
   --measure-text: 74ch; /* 正文/引用/连结的统一行宽 —— 全站只此一个 */
+}
+
+/* —— 暗色：暖调深色，不是中性黑。跟随 --canvas 的暖纸基调 —— */
+:root[data-theme='dark'] {
+  --primary: #e0916f;
+  --primary-active: #f0a381;
+  --primary-wash: rgba(224, 145, 111, 0.14);
+  --ink: #f4efe6;
+  --body: #d2cabb;
+  --muted: #9d9788;
+  --muted-soft: #8b8477;
+  --hairline: #34302a;
+  --hairline-soft: #262320;
+  --canvas: #14130f;
+  --surface-soft: #1c1a15;
+  --surface-card: #221f1a;
+  --surface-strong: #2b2721;
+  --surface-page: #1e1c17;
+  --dark: #1d1b17;
+  --dark-elev: #2a2721;
+  --on-dark: #f4efe6;
+  --on-dark-soft: #9d9788;
+  --on-dark-line: #35322b;
+  --on-primary: #1a1512;
+  --shadow-panel: 0 14px 34px rgba(0, 0, 0, 0.55);
+
+  --prov-google: #8fa8b8;
+  --prov-deepl: #ab99c0;
+  --prov-llm: #e0916f;
+  --prov-human: #7fbf8e;
+
+  color-scheme: dark;
 }
 
 * {
@@ -102,10 +138,11 @@ body::after {
 }
 .masthead .bar {
   display: flex;
-  align-items: baseline;
-  gap: 28px;
+  align-items: center;
+  gap: 22px;
   padding: 10px 0 9px;
-  flex-wrap: wrap;
+  /* 永不换行 —— 空间不够时收缩可收缩项，而不是折成多行 */
+  flex-wrap: nowrap;
 }
 .wordmark {
   font-family: var(--f-display);
@@ -118,6 +155,12 @@ body::after {
   display: inline-flex;
   align-items: baseline;
   gap: 10px;
+  min-width: 0; /* 允许收缩，超出时截断而不是把整栏挤到下一行 */
+}
+.wordmark > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .wordmark .han {
   font-family: var(--f-cjk);
@@ -125,10 +168,80 @@ body::after {
   color: var(--primary);
   font-size: 1.28rem;
 }
+.themebtn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  color: var(--on-dark-soft);
+  border: 1px solid var(--on-dark-line);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.themebtn:hover {
+  color: var(--on-dark);
+  background: var(--dark-elev);
+}
+.themebtn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.themebtn .ti {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: none;
+}
+.themebtn .ti .fill {
+  fill: currentColor;
+  stroke: none;
+}
+/* 三个图标只显示与当前偏好相符的一个 */
+:root[data-theme-pref='system'] .themebtn .ti-system,
+:root[data-theme-pref='light'] .themebtn .ti-light,
+:root[data-theme-pref='dark'] .themebtn .ti-dark {
+  display: block;
+}
+
+.wm-short {
+  display: none;
+}
+
+/* 导航抽屉：桌面端完全展开、按钮隐藏；移动端见下方媒体查询 */
+.navwrap {
+  display: flex;
+  min-width: 0;
+}
+.navwrap > summary {
+  display: none;
+}
+/* <details> 未展开时 UA 样式会藏起子元素，这里显式覆盖回常显 */
+.navwrap > nav {
+  display: flex;
+}
+
 .masthead nav {
   display: flex;
   gap: 2px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.masthead nav::-webkit-scrollbar {
+  display: none;
+}
+.masthead nav a {
+  flex: 0 0 auto;
 }
 .masthead nav a {
   font-family: var(--f-mono);
@@ -155,6 +268,7 @@ body::after {
 .langbar {
   display: flex;
   gap: 6px;
+  flex: 0 0 auto;
 }
 .langbar a {
   font-family: var(--f-mono);
@@ -163,7 +277,7 @@ body::after {
   color: var(--on-dark-soft);
   text-decoration: none;
   padding: 5px 10px;
-  border: 1px solid #3a3733;
+  border: 1px solid var(--on-dark-line);
   border-radius: var(--r-sm);
   transition: all 0.18s ease;
 }
@@ -174,7 +288,7 @@ body::after {
 .langbar a.active {
   background: var(--primary);
   border-color: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 main {
@@ -271,7 +385,7 @@ p {
   width: 320px;
   padding: 7px 12px 7px 34px;
   color: var(--ink);
-  background: #fff;
+  background: var(--surface-page);
   border: 1px solid var(--hairline);
   border-radius: var(--r-sm);
   outline: none;
@@ -320,7 +434,7 @@ p {
   font-size: 0.72rem;
   letter-spacing: 0.05em;
   color: var(--ink);
-  background: #fff;
+  background: var(--surface-page);
   border: 1px solid var(--hairline);
   border-radius: var(--r-sm);
   padding: 7px 12px;
@@ -364,10 +478,10 @@ p {
   z-index: 40;
   display: flex;
   gap: 26px;
-  background: #fff;
+  background: var(--surface-page);
   border: 1px solid var(--hairline);
   border-radius: var(--r-md);
-  box-shadow: 0 14px 34px rgba(20, 20, 19, 0.11);
+  box-shadow: var(--shadow-panel);
   padding: 15px 18px;
 }
 .panelgroup {
@@ -440,7 +554,7 @@ p {
   min-height: 0;
   border: 1px solid var(--hairline);
   border-top: none;
-  background: #fff;
+  background: var(--surface-page);
   overflow: auto;
   overscroll-behavior: contain;
 }
@@ -719,11 +833,77 @@ footer.site p {
 }
 
 @media (max-width: 620px) {
+  /* 页面各区块带 animation（会创建层叠上下文），抽屉要盖过它们，
+     就得让 .masthead 自己也形成层叠上下文并提权 */
+  .masthead {
+    position: relative;
+    z-index: 50;
+  }
   .masthead .bar {
-    gap: 14px;
+    gap: 10px;
   }
   .wordmark {
     font-size: 1rem;
+  }
+  /* 全名太长会只剩「Lagar…」，换成短名 */
+  .wm-full {
+    display: none;
+  }
+  .wm-short {
+    display: inline;
+  }
+  /* 抽屉按钮排到最后 */
+  .navwrap {
+    order: 9;
+  }
+  .navwrap > summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: var(--on-dark-soft);
+    border: 1px solid var(--on-dark-line);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    list-style: none;
+  }
+  .navwrap > summary::-webkit-details-marker {
+    display: none;
+  }
+  .navwrap > summary:hover {
+    color: var(--on-dark);
+    background: var(--dark-elev);
+  }
+  .navwrap > summary svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+  /* 收起时藏起整条导航，展开时铺成面板 */
+  .navwrap:not([open]) > nav {
+    display: none;
+  }
+  .navwrap[open] > nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    flex-direction: column;
+    gap: 0;
+    padding: 4px 16px 10px;
+    background: var(--dark-elev);
+    border-top: 1px solid var(--on-dark-line);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.38);
+    overflow: visible;
+  }
+  .navwrap[open] > nav a {
+    padding: 11px 4px;
+    border-radius: var(--r-xs);
   }
 }
 
@@ -1016,7 +1196,7 @@ ul.links a {
   font-size: 0.76rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--on-primary);
   background: var(--primary);
   padding: 10px 18px;
   border-radius: var(--r-sm);
@@ -1097,7 +1277,7 @@ ul.links a {
   position: relative;
   flex: 1 1 auto;
   min-height: 220px; /* 不再用 aspect-ratio 锁高，改由文字栏决定高度 */
-  background: #fff;
+  background: var(--surface-page);
   border: 1px solid var(--hairline);
   border-radius: var(--r-sm);
   overflow: hidden;
@@ -1149,7 +1329,7 @@ ul.links a {
   font-size: 0.95rem;
   line-height: 1;
   color: var(--muted);
-  background: #fff;
+  background: var(--surface-page);
   border: 1px solid var(--hairline);
   border-radius: var(--r-xs);
   cursor: pointer;

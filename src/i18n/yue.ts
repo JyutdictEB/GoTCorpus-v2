@@ -10,6 +10,8 @@ export default {
     project: '計劃',
     toc: '本頁內容',
     footer: '由 1900 年版數碼化',
+    themeToggle: '切換主題',
+    menu: '選單',
     legend: '譯文溯源',
     legendGoogle: 'Google 翻譯',
     legendDeepl: 'DeepL',
@@ -18,6 +20,7 @@ export default {
   },
   app: {
     title: 'Lagarrue 北部灣粵語網上語料庫',
+    shortTitle: 'GoT 語料庫',
   },
   common: {
     search: '搵嘢',

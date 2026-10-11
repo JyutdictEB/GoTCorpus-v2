@@ -49,24 +49,73 @@ const url = (l: Locale) => new URL(localizedPath(l, path), SITE).href;
       <link rel="alternate" hreflang={HTML_LANG[l]} href={url(l)} />
     ))}
     <link rel="alternate" hreflang="x-default" href={url(LOCALES[0])} />
+    <script is:inline>
+      // 在首次绘制前定好主题，避免闪白（或闪黑）。
+      // 必须内联且同步执行 —— 放进打包脚本会被延迟到绘制之后。
+      (function () {
+        let pref = 'system';
+        try {
+          pref = localStorage.getItem('theme') || 'system';
+        } catch {
+          /* 隐私模式下 localStorage 可能抛错，退回跟随系统 */
+        }
+        const dark =
+          pref === 'dark' ||
+          (pref !== 'light' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const el = document.documentElement;
+        el.dataset.theme = dark ? 'dark' : 'light';
+        el.dataset.themePref = pref;
+      })();
+    </script>
+    {locale === 'en' && <script is:inline>
+      // 按浏览器语言把中文用户送到粤文站。
+      // 只在英文页输出 —— /yue/ 页没有这段脚本，所以不存在死循环。
+      // 用户手动点过语言切换后写 localStorage，之后永不自动跳转。
+      (function () {
+        const path = location.pathname;
+        try {
+          if (localStorage.getItem('lang')) return;
+        } catch {
+          return; // 存不了就无法记住「不要跳」，宁可不动
+        }
+        const langs = navigator.languages || [navigator.language || ''];
+        for (let i = 0; i < langs.length; i++) {
+          if (/^(zh|yue|cmn|nan|hak|lzh)/i.test(langs[i])) {
+            location.replace(
+              '/yue' + (path === '/' ? '/' : path) + location.search,
+            );
+            return;
+          }
+        }
+      })();
+    </script>}
   </head>
   <body class:list={[{ shell }]}>
     <header class="masthead">
       <div class="wrap bar">
         <a class="wordmark" href={localizedPath(locale, '/')}>
           <span class="han">粵</span>
-          <span>{t.app.title}</span>
+          <span class="wm-full">{t.app.title}</span>
+          <span class="wm-short">{t.app.shortTitle}</span>
         </a>
-        <nav>
-          {NAV.map((n) => (
-            <a
-              href={localizedPath(locale, n.href)}
-              aria-current={n.href === path ? 'page' : undefined}
-            >
-              {navLabel(n.key)}
-            </a>
-          ))}
-        </nav>
+        <details class="navwrap">
+          <summary class="navbtn" aria-label={ui.menu} title={ui.menu}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16"></path>
+            </svg>
+          </summary>
+          <nav>
+            {NAV.map((n) => (
+              <a
+                href={localizedPath(locale, n.href)}
+                aria-current={n.href === path ? 'page' : undefined}
+              >
+                {navLabel(n.key)}
+              </a>
+            ))}
+          </nav>
+        </details>
         <span class="langbar">
           {LOCALES.map((l) => (
             <a
@@ -78,6 +127,25 @@ const url = (l: Locale) => new URL(localizedPath(l, path), SITE).href;
             </a>
           ))}
         </span>
+        <button
+          class="themebtn"
+          type="button"
+          data-theme-toggle
+          aria-label={ui.themeToggle}
+          title={ui.themeToggle}
+        >
+          <svg class="ti ti-system" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5"></circle>
+            <path class="fill" d="M12 3.5a8.5 8.5 0 0 1 0 17Z"></path>
+          </svg>
+          <svg class="ti ti-light" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.2"></circle>
+            <path d="M12 1.8v2.6M12 19.6v2.6M1.8 12h2.6M19.6 12h2.6M4.8 4.8l1.9 1.9M17.3 17.3l1.9 1.9M19.2 4.8l-1.9 1.9M6.7 17.3l-1.9 1.9"></path>
+          </svg>
+          <svg class="ti ti-dark" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.5 14.8A8.7 8.7 0 1 1 9.2 3.5a6.9 6.9 0 0 0 11.3 11.3Z"></path>
+          </svg>
+        </button>
       </div>
     </header>
     <main>
@@ -93,5 +161,53 @@ const url = (l: Locale) => new URL(localizedPath(l, path), SITE).href;
         </div>
       </footer>
     )}
+    <script>
+      // 主题循环：跟随系统 → 日间 → 夜间 → 跟随系统
+      const ORDER = ['system', 'light', 'dark'];
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+      function resolve(pref: string): boolean {
+        return pref === 'dark' || (pref !== 'light' && media.matches);
+      }
+
+      function apply(pref: string): void {
+        const el = document.documentElement;
+        el.dataset.theme = resolve(pref) ? 'dark' : 'light';
+        el.dataset.themePref = pref;
+      }
+
+      document
+        .querySelector('[data-theme-toggle]')
+        ?.addEventListener('click', () => {
+          const current =
+            document.documentElement.dataset.themePref || 'system';
+          const next = ORDER[(ORDER.indexOf(current) + 1) % ORDER.length];
+          try {
+            localStorage.setItem('theme', next);
+          } catch {
+            /* 存不了就只在本次会话生效 */
+          }
+          apply(next);
+        });
+
+      // 手动切过语言就记下来，之后不再自动跳转
+      document.querySelectorAll('.langbar a').forEach((a) => {
+        a.addEventListener('click', () => {
+          try {
+            localStorage.setItem('lang', a.getAttribute('hreflang') || 'en');
+          } catch {
+            /* 存不了就算了 */
+          }
+        });
+      });
+
+      // 跟随系统时，系统切换要实时反映
+      media.addEventListener('change', () => {
+        if (
+          (document.documentElement.dataset.themePref || 'system') === 'system'
+        )
+          apply('system');
+      });
+    </script>
   </body>
 </html>
