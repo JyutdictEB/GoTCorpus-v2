@@ -1,0 +1,24 @@
+---
+import DataPage from '../components/DataPage.astro'
+import { messages } from '../i18n'
+import { SECTIONS } from '../lib/corpus'
+
+export function getStaticPaths() {
+  return SECTIONS.map((s) => ({ params: { section: s.slug }, props: { section: s } }))
+}
+
+const { section } = Astro.props
+const t = messages.en
+const title = (t.pages as Record<string, { title: string }>)[section.titleKey].title
+const eyebrow = (t.nav as Record<string, string>)[section.titleKey]
+---
+<DataPage
+  locale="en"
+  path={"/" + section.slug}
+  title={title}
+  description={t.about.contentsBody.slice(0, 150)}
+  eyebrow={eyebrow}
+  rows={section.rows}
+  columns={section.columns}
+  ds={section.slug}
+/>

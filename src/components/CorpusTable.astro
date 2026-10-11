@@ -1,0 +1,180 @@
+---
+import { messages, type Locale } from '../i18n'
+import { cellValue, type ColumnDef, type Row } from '../lib/corpus'
+
+interface Props {
+  rows: Row[]
+  columns: ColumnDef[]
+  locale: Locale
+  variant?: 'all' | 'lean'
+  tableId: string
+  ds: string
+}
+const { rows, columns, locale, variant = 'all', tableId, ds } = Astro.props
+const t = messages[locale]
+const ui = (t as Record<string, any>).ui as Record<string, string>
+const colLabel = (k: string) => (t.columns as Record<string, string>)[k] ?? k
+const rendered = variant === "lean" ? columns.filter((c) => c.visible) : columns
+const sourceCols = rendered.filter((c) => c.kind !== "mt")
+const mtCols = rendered.filter((c) => c.kind === "mt")
+const visibleCount = rendered.filter((c) => c.visible).length
+const provClass = (c: ColumnDef) => (c.prov ? " prov-" + c.prov : "")
+---
+<div class="corpus-shell" data-corpus-table>
+  <div class="toolbar">
+    <div class="field">
+      <input type="search" data-search placeholder={t.common.search} aria-label={t.common.search} />
+    </div>
+    <details class="colpicker">
+      <summary class="colbtn">
+        <span class="ico">▦</span>
+        {ui.columns}
+        <b data-colcount>{visibleCount}</b>/<span data-coltotal>{rendered.length}</span>
+        <span class="chev">▾</span>
+      </summary>
+      <div class="colpanel">
+        <div class="panelgroup">
+          <span class="grouplabel">{ui.source}</span>
+          {sourceCols.map((c) => (
+            <label class="prow">
+              <input type="checkbox" data-col-toggle={c.key} checked={c.visible} />
+              <span class="dot"></span>
+              <span>{colLabel(c.i18n)}</span>
+            </label>
+          ))}
+        </div>
+        {mtCols.length > 0 && (
+          <div class="panelgroup">
+            <span class="grouplabel">{ui.machine}</span>
+            {mtCols.map((c) => (
+              <label class={"prow" + provClass(c)}>
+                <input type="checkbox" data-col-toggle={c.key} checked={c.visible} />
+                <span class="dot"></span>
+                <span>{colLabel(c.i18n)}</span>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+    </details>
+    <span class="count" data-counter data-label={ui.showing}></span>
+  </div>
+  <div class="tablewrap">
+    <table class="corpus" id={tableId}>
+      <thead>
+        <tr>
+          {rendered.map((c) => (
+            <th scope="col" data-col={c.key} class={"k-" + c.kind + provClass(c) + (c.visible ? "" : " is-colhidden")}>
+              {c.kind === "mt" && <span class="hdot" />}
+              {colLabel(c.i18n)}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr>
+            {rendered.map((c) => (
+              <td data-col={c.key} class={"k-" + c.kind + (c.visible ? "" : " is-colhidden")}>{cellValue(r, c.key, locale, ds)}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <div class="legend">
+    <span><i class="l-llm"></i>{ui.legendLlm}</span>
+    <span><i class="l-google"></i>{ui.legendGoogle}</span>
+    <span><i class="l-human"></i>{ui.legendHuman}</span>
+    <span class="spacer"></span>
+    <span>Lagarrue’s GoT Cantonese Online Corpus</span>
+  </div>
+</div>
+
+<script>
+  function initCorpusTable(root) {
+    var table = root.querySelector("table.corpus")
+    if (!table) return
+    var rows = Array.prototype.slice.call(table.querySelector("tbody").rows)
+    var search = root.querySelector("[data-search]")
+    var counter = root.querySelector("[data-counter]")
+    var toggles = Array.prototype.slice.call(root.querySelectorAll("[data-col-toggle]"))
+    var colcount = root.querySelector("[data-colcount]")
+    var picker = root.querySelector("details.colpicker")
+    var colCells = new Map()
+
+    function cellsFor(col) {
+      if (!colCells.has(col)) {
+        colCells.set(col, Array.prototype.slice.call(table.querySelectorAll('[data-col="' + col + '"]')))
+      }
+      return colCells.get(col)
+    }
+
+    function reindex() {
+      var active = {}
+      var n = 0
+      toggles.forEach(function (cb) { if (cb.checked) { active[cb.getAttribute("data-col-toggle")] = 1; n++ } })
+      if (colcount) colcount.textContent = String(n)
+      for (var i = 0; i < rows.length; i++) {
+        var cells = rows[i].children, parts = []
+        for (var j = 0; j < cells.length; j++) {
+          var c = cells[j]
+          if (active[c.getAttribute("data-col")] === 1 && !c.classList.contains("is-colhidden")) parts.push(c.textContent)
+        }
+        rows[i].setAttribute("data-text", parts.join(" ").toLowerCase())
+      }
+    }
+
+    function updateCounter(shown) {
+      if (!counter) return
+      counter.innerHTML = (counter.getAttribute("data-label") || "") + " <b>" + shown.toLocaleString() + "</b> / " + rows.length.toLocaleString()
+    }
+
+    function applyFilter() {
+      var q = (search && search.value ? search.value : "").trim().toLowerCase()
+      var shown = 0
+      for (var i = 0; i < rows.length; i++) {
+        var hit = q === "" || (rows[i].getAttribute("data-text") || "").indexOf(q) !== -1
+        rows[i].classList.toggle("is-hidden", !hit)
+        if (hit) shown++
+      }
+      updateCounter(shown)
+    }
+
+    var timer = 0
+    toggles.forEach(function (cb) {
+      cb.addEventListener("change", function () {
+        var hide = !cb.checked
+        cellsFor(cb.getAttribute("data-col-toggle")).forEach(function (el) { el.classList.toggle("is-colhidden", hide) })
+        reindex()
+        applyFilter()
+      })
+    })
+    if (search) search.addEventListener("input", function () {
+      clearTimeout(timer)
+      timer = setTimeout(applyFilter, 120)
+    })
+    document.addEventListener("click", function (e) {
+      if (picker && picker.open && !picker.contains(e.target)) picker.open = false
+    })
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && picker) picker.open = false
+    })
+    reindex()
+    applyFilter()
+
+    // 滚动表格时收缩页头，把纵向空间让给数据
+    var wrap = root.querySelector(".tablewrap")
+    if (wrap) {
+      var onScroll = function () {
+        var y = wrap.scrollTop
+        var c = document.body.classList.contains("is-collapsed")
+        if (!c && y > 40) { document.body.classList.add("is-collapsed") }
+        else if (c && y < 12) { document.body.classList.remove("is-collapsed") }
+      }
+      wrap.addEventListener("scroll", onScroll, { passive: true })
+      onScroll()
+    }
+  }
+  document.querySelectorAll("[data-corpus-table]").forEach(initCorpusTable)
+</script>

@@ -1,0 +1,70 @@
+---
+import { messages, localizedPath, HTML_LANG, LOCALES, type Locale } from '../i18n'
+import '../styles/fonts.css'
+import '../styles/global.css'
+
+interface Props { locale: Locale; path: string; title: string; description: string; shell?: boolean }
+const { locale, path, title, description, shell = false } = Astro.props
+const t = messages[locale]
+const ui = (t as Record<string, any>).ui as Record<string, string>
+const SITE = Astro.site ?? new URL("https://got.jyutdict.org")
+const NAV = [
+  { href: "/", key: "homepage" },
+  { href: "/introduction", key: "introduction" },
+  { href: "/phoneme_description", key: "phonemeDescription" },
+  { href: "/vocabulary", key: "vocabulary" },
+  { href: "/sentences", key: "sentences" },
+  { href: "/idioms", key: "idioms" },
+  { href: "/about", key: "about" },
+]
+const navLabel = (k: string) => (t.nav as Record<string, string>)[k] ?? k
+const url = (l: Locale) => new URL(localizedPath(l, path), SITE).href
+---
+<!doctype html>
+<html lang={HTML_LANG[locale]}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={url(locale)} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={url(locale)} />
+  {LOCALES.filter((l) => l !== locale).map((l) => <link rel="alternate" hreflang={HTML_LANG[l]} href={url(l)} />)}
+</head>
+<body class:list={[{ shell }]}>
+  <header class="masthead">
+    <div class="wrap bar">
+      <a class="wordmark" href={localizedPath(locale, "/")}>
+        <span class="han">粵</span>
+        <span>{t.app.title}<small>Lagarrue · GoT · 1900</small></span>
+      </a>
+      <nav>
+        {NAV.map((n) => (
+          <a href={localizedPath(locale, n.href)} aria-current={n.href === path ? "page" : undefined}>{navLabel(n.key)}</a>
+        ))}
+      </nav>
+      <span class="langbar">
+        {LOCALES.map((l) => (
+          <a href={localizedPath(l, path)} class={l === locale ? "active" : ""} hreflang={HTML_LANG[l]}>{l === "en" ? "EN" : "粵"}</a>
+        ))}
+      </span>
+    </div>
+  </header>
+  <main>
+    <div class="wrap">
+      <slot />
+    </div>
+  </main>
+  {!shell && (
+    <footer class="site">
+      <div class="wrap row2">
+        <p>{t.app.title}</p>
+        <p>{ui.footer}</p>
+      </div>
+    </footer>
+  )}
+</body>
+</html>

@@ -1,0 +1,16 @@
+---
+import DataPage from '../components/DataPage.astro'
+import { messages } from '../i18n'
+import { vocabRows, vocabColumns } from '../lib/corpus'
+const t = messages.en
+---
+<DataPage
+  locale="en"
+  path="/vocabulary"
+  title={t.pages.vocabulary.title}
+  description={t.about.contentsBody.slice(0, 150)}
+  eyebrow={t.nav.vocabulary}
+  rows={vocabRows}
+  columns={vocabColumns}
+  ds="vocabulary"
+/>
