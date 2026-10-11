@@ -99,23 +99,29 @@ const url = (l: Locale) => new URL(localizedPath(l, path), SITE).href;
           <span class="wm-full">{t.app.title}</span>
           <span class="wm-short">{t.app.shortTitle}</span>
         </a>
-        <details class="navwrap">
-          <summary class="navbtn" aria-label={ui.menu} title={ui.menu}>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 7h16M4 12h16M4 17h16"></path>
-            </svg>
-          </summary>
-          <nav>
-            {NAV.map((n) => (
-              <a
-                href={localizedPath(locale, n.href)}
-                aria-current={n.href === path ? 'page' : undefined}
-              >
-                {navLabel(n.key)}
-              </a>
-            ))}
-          </nav>
-        </details>
+        <button
+          class="navbtn"
+          type="button"
+          data-nav-toggle
+          aria-expanded="false"
+          aria-controls="site-nav"
+          aria-label={ui.menu}
+          title={ui.menu}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"></path>
+          </svg>
+        </button>
+        <nav id="site-nav">
+          {NAV.map((n) => (
+            <a
+              href={localizedPath(locale, n.href)}
+              aria-current={n.href === path ? 'page' : undefined}
+            >
+              {navLabel(n.key)}
+            </a>
+          ))}
+        </nav>
         <span class="langbar">
           {LOCALES.map((l) => (
             <a
@@ -189,6 +195,33 @@ const url = (l: Locale) => new URL(localizedPath(l, path), SITE).href;
           }
           apply(next);
         });
+
+      // 移动端导航抽屉
+      const navBtn = document.querySelector('[data-nav-toggle]');
+      navBtn?.addEventListener('click', () => {
+        const open = document.body.classList.toggle('nav-open');
+        navBtn.setAttribute('aria-expanded', String(open));
+      });
+      document.addEventListener('keydown', (e) => {
+        if (
+          e.key === 'Escape' &&
+          document.body.classList.contains('nav-open')
+        ) {
+          document.body.classList.remove('nav-open');
+          navBtn?.setAttribute('aria-expanded', 'false');
+        }
+      });
+      document.addEventListener('click', (e) => {
+        if (!document.body.classList.contains('nav-open')) return;
+        const t = e.target;
+        if (
+          t instanceof Node &&
+          !document.querySelector('.masthead')?.contains(t)
+        ) {
+          document.body.classList.remove('nav-open');
+          navBtn?.setAttribute('aria-expanded', 'false');
+        }
+      });
 
       // 手动切过语言就记下来，之后不再自动跳转
       document.querySelectorAll('.langbar a').forEach((a) => {

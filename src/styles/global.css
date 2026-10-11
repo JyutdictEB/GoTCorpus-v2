@@ -157,7 +157,9 @@ body::after {
   gap: 10px;
   min-width: 0; /* 允许收缩，超出时截断而不是把整栏挤到下一行 */
 }
-.wordmark > span:last-child {
+/* 两个名称都要单行截断 —— 用 :last-child 会在加入短名后指错元素 */
+.wordmark .wm-full,
+.wordmark .wm-short {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -216,17 +218,9 @@ body::after {
   display: none;
 }
 
-/* 导航抽屉：桌面端完全展开、按钮隐藏；移动端见下方媒体查询 */
-.navwrap {
-  display: flex;
-  min-width: 0;
-}
-.navwrap > summary {
+/* 移动端导航按钮：桌面端隐藏，导航常显 */
+.navbtn {
   display: none;
-}
-/* <details> 未展开时 UA 样式会藏起子元素，这里显式覆盖回常显 */
-.navwrap > nav {
-  display: flex;
 }
 
 .masthead nav {
@@ -853,29 +847,25 @@ footer.site p {
     display: inline;
   }
   /* 抽屉按钮排到最后 */
-  .navwrap {
+  .navbtn {
     order: 9;
-  }
-  .navwrap > summary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 32px;
     height: 32px;
+    padding: 0;
     color: var(--on-dark-soft);
+    background: transparent;
     border: 1px solid var(--on-dark-line);
     border-radius: var(--r-sm);
     cursor: pointer;
-    list-style: none;
   }
-  .navwrap > summary::-webkit-details-marker {
-    display: none;
-  }
-  .navwrap > summary:hover {
+  .navbtn:hover {
     color: var(--on-dark);
     background: var(--dark-elev);
   }
-  .navwrap > summary svg {
+  .navbtn svg {
     width: 15px;
     height: 15px;
     fill: none;
@@ -883,16 +873,17 @@ footer.site p {
     stroke-width: 1.5;
     stroke-linecap: round;
   }
-  /* 收起时藏起整条导航，展开时铺成面板 */
-  .navwrap:not([open]) > nav {
+  /* 移动端默认收起导航；展开时铺成面板 */
+  .masthead nav {
     display: none;
   }
-  .navwrap[open] > nav {
+  body.nav-open .masthead nav {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     z-index: 60;
+    display: flex;
     flex-direction: column;
     gap: 0;
     padding: 4px 16px 10px;
@@ -901,7 +892,7 @@ footer.site p {
     box-shadow: 0 14px 30px rgba(0, 0, 0, 0.38);
     overflow: visible;
   }
-  .navwrap[open] > nav a {
+  body.nav-open .masthead nav a {
     padding: 11px 4px;
     border-radius: var(--r-xs);
   }
