@@ -47,6 +47,27 @@ repeated it.
 \`meta.reviewed\` is currently \`false\` — **these translations have not been checked by a
 human**.
 
+## Deployment
+
+Deployed as a **Workers static-assets site** — Cloudflare serves `dist/` straight from the
+asset store and does not invoke a script for asset hits. The site remains build-time
+rendered HTML; the Worker is only the delivery mechanism.
+
+```bash
+npm run build     # astro build -> dist/
+npm run deploy    # wrangler deploy
+```
+
+`wrangler.jsonc` declares `assets.directory` with **no `main`** (static assets only) and binds
+the custom domain `got.jyutjam.org`.
+
+> `netlify.toml` was removed: the project is no longer deployed on Netlify.
+>
+> `cf` (the beta Cloudflare CLI) cannot currently build this project — its Astro
+> autoconfig injects the `@astrojs/cloudflare` SSR adapter and then fails with
+> `Build Output Specification: no root config found`. `wrangler` is the working path and
+> is a dependency of `cf` anyway.
+
 ## Commands
 
 \`\`\`bash
