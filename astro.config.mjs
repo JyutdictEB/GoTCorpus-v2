@@ -1,6 +1,6 @@
-import { defineConfig } from 'astro/config'
-import vue from '@astrojs/vue'
-import sitemap from '@astrojs/sitemap'
+import { defineConfig } from 'astro/config';
+import vue from '@astrojs/vue';
+import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://got.jyutdict.org',
@@ -10,4 +10,4 @@ export default defineConfig({
     locales: ['en', 'yue'],
     routing: { prefixDefaultLocale: false },
   },
-})
+});

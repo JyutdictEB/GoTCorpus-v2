@@ -10,13 +10,13 @@ requires JavaScript to show anything.
 
 ## Why a rewrite
 
-| | original (Quasar SPA) | this repo |
-|---|---|---|
-| HTML content | empty shell | full static HTML |
-| JavaScript required | yes | no (enhancement script inlined, ~1.4 KB) |
-| \`/yue/\` locale route | 404 | supported |
-| \`sitemap-index.xml\` | 404 | generated |
-| Locales | \`en-US\`, \`zh-HK\` | \`en\`, \`yue\` (written Cantonese) |
+|                        | original (Quasar SPA) | this repo                                |
+| ---------------------- | --------------------- | ---------------------------------------- |
+| HTML content           | empty shell           | full static HTML                         |
+| JavaScript required    | yes                   | no (enhancement script inlined, ~1.4 KB) |
+| \`/yue/\` locale route | 404                   | supported                                |
+| \`sitemap-index.xml\`  | 404                   | generated                                |
+| Locales                | \`en-US\`, \`zh-HK\`  | \`en\`, \`yue\` (written Cantonese)      |
 
 ## Stack
 
@@ -72,9 +72,9 @@ the custom domain `got.jyutjam.org`.
 
 \`\`\`bash
 npm install
-npm run dev      # dev server
-npm run build    # static output in dist/
-npm run preview  # serve the built output
+npm run dev # dev server
+npm run build # static output in dist/
+npm run preview # serve the built output
 \`\`\`
 
 Requires Node >= 22.12.

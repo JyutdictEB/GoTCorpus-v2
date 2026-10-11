@@ -1,18 +1,23 @@
 ---
-import Layout from '../components/Layout.astro'
-import { messages, localizedPath } from '../i18n'
-const t = messages.en
+import Layout from '../components/Layout.astro';
+import { messages, localizedPath } from '../i18n';
+const t = messages.en;
 ---
+
 <Layout
   locale="en"
   path="/404"
-  title={"404 \u00b7 " + t.app.title}
+  title={'404 \u00b7 ' + t.app.title}
   description={t.errorNotFound.message}
 >
   <div class="notfound">
     <div class="code">404</div>
     <h1>{t.errorNotFound.message}</h1>
-    <p class="back"><a href={localizedPath("en", "/")}>{t.errorNotFound.goHome}</a></p>
-    <p class="alt"><a href="/yue/">粵文主頁</a></p>
+    <p class="back">
+      <a href={localizedPath('en', '/')}>{t.errorNotFound.goHome}</a>
+    </p>
+    <p class="alt">
+      <a href="/yue/">粵文主頁</a>
+    </p>
   </div>
 </Layout>

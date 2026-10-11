@@ -1,43 +1,61 @@
 ---
-import Layout from '../components/Layout.astro'
-import { messages, type Locale } from '../i18n'
-interface Props { locale: Locale }
-const { locale } = Astro.props
-const t = messages[locale]
-const a = t.about
-const L = a.links
-const U = a.linkUrls
-const ui = (t as Record<string, any>).ui as Record<string, string>
+import Layout from '../components/Layout.astro';
+import { messages, type Locale } from '../i18n';
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = messages[locale];
+const a = t.about;
+const L = a.links;
+const U = a.linkUrls;
+const ui = t.ui;
 
-const EMAIL = "jyutjam@tutanota.com"
-const REPO = "https://github.com/JyutdictEB/GoTCorpus"
+const EMAIL = 'jyutjam@tutanota.com';
+const REPO = 'https://github.com/JyutdictEB/GoTCorpus';
 const citeIntro = a.citationIntro
-  .replace("{supplementary}", '<a href="#s-cite-supplementary">' + a.citationSupplementary + "</a>")
-  .replace("{main}", '<a href="#s-cite-main">' + a.citationMain + "</a>")
-  .replace("{github}", '<a href="#s-cite-github">' + a.citationGithub + "</a>")
-const contactIntro = a.contactIntro.replace("{email}", '<a href="mailto:' + EMAIL + '">' + EMAIL + "</a>")
-const contactGithub = a.contactGithub.replace("{githubPage}", '<a href="' + REPO + '" target="_blank" rel="noopener">' + a.githubPageLink + "</a>")
+  .replace(
+    '{supplementary}',
+    '<a href="#s-cite-supplementary">' + a.citationSupplementary + '</a>',
+  )
+  .replace('{main}', '<a href="#s-cite-main">' + a.citationMain + '</a>')
+  .replace('{github}', '<a href="#s-cite-github">' + a.citationGithub + '</a>');
+const contactIntro = a.contactIntro.replace(
+  '{email}',
+  '<a href="mailto:' + EMAIL + '">' + EMAIL + '</a>',
+);
+const contactGithub = a.contactGithub.replace(
+  '{githubPage}',
+  '<a href="' +
+    REPO +
+    '" target="_blank" rel="noopener">' +
+    a.githubPageLink +
+    '</a>',
+);
 
 const toc = [
-  { id: "s-source", label: a.sourceMaterialHeading },
-  { id: "s-contents", label: a.contentsHeading },
-  { id: "s-digitization", label: a.digitizationHeading },
-  { id: "s-findings", label: a.findingsHeading },
-  { id: "s-openaccess", label: a.openAccessHeading },
-  { id: "s-cite", label: a.citationHeading },
-  { id: "s-contact", label: a.contactHeading },
-]
+  { id: 's-source', label: a.sourceMaterialHeading },
+  { id: 's-contents', label: a.contentsHeading },
+  { id: 's-digitization', label: a.digitizationHeading },
+  { id: 's-findings', label: a.findingsHeading },
+  { id: 's-openaccess', label: a.openAccessHeading },
+  { id: 's-cite', label: a.citationHeading },
+  { id: 's-contact', label: a.contactHeading },
+];
 ---
+
 <Layout
   locale={locale}
   path="/about"
-  title={a.heading + " \u00b7 " + t.app.title}
+  title={a.heading + ' \u00b7 ' + t.app.title}
   description={a.sourceMaterialBody.slice(0, 150)}
 >
   <div class="doc">
     <div class="doc-main">
       <div class="page-head">
-        <div class="eyebrow">{t.nav.about} &middot; {ui.project}</div>
+        <div class="eyebrow">
+          {t.nav.about} &middot; {ui.project}
+        </div>
         <h1>{a.heading}</h1>
         <div class="meta-line">
           <span>&Eacute;l&eacute;ments de Langue Chinoise</span>
@@ -70,11 +88,18 @@ const toc = [
           <h3>{a.supplementaryHeading}</h3>
           <p class="cite-label">{a.mlaLabel}</p>
           <blockquote class="cite">
-            Huang, Junxin, and Joeng-zit Lai. &ldquo;Evolving Pre-processing of Raw Corpus: The Digitization Initiative of Cantonese Material at the Sino-Vietnamese Border in the Late 19th Century.&rdquo; <i>Buckeye East Asian Linguistics</i>, vol. 9, Nov 2024, pp. 32&ndash;51.
+            Huang, Junxin, and Joeng-zit Lai. &ldquo;Evolving Pre-processing of
+            Raw Corpus: The Digitization Initiative of Cantonese Material at the
+            Sino-Vietnamese Border in the Late 19th Century.&rdquo;{' '}
+            <i>Buckeye East Asian Linguistics</i>, vol. 9, Nov 2024, pp.
+            32&ndash;51.
           </blockquote>
           <p class="cite-label">{a.apaLabel}</p>
           <blockquote class="cite">
-            Huang, J., &amp; Lai, J. (2024, Nov). Evolving pre-processing of raw corpus: The digitization initiative of Cantonese material at the Sino-Vietnamese border in the late 19th century. <i>Buckeye East Asian Linguistics</i>, 9, 32&ndash;51.
+            Huang, J., &amp; Lai, J. (2024, Nov). Evolving pre-processing of raw
+            corpus: The digitization initiative of Cantonese material at the
+            Sino-Vietnamese border in the late 19th century.{' '}
+            <i>Buckeye East Asian Linguistics</i>, 9, 32&ndash;51.
           </blockquote>
         </section>
 
@@ -82,11 +107,24 @@ const toc = [
           <h3>{a.mainHeading}</h3>
           <p class="cite-label">{a.mlaLabel}</p>
           <blockquote class="cite">
-            Lai, Joeng-zit, et al. &ldquo;The Affiliation of Cantonese at the Sino-Vietnamese Border in the Late 19th Century.&rdquo; <i>Current Research in Chinese Linguistics</i>, vol. 102, no. 2, July 2023, DOI: 10.29499/CrCL.202307_102(2).0004.
+            Lai, Joeng-zit, et al. &ldquo;The Affiliation of Cantonese at the
+            Sino-Vietnamese Border in the Late 19th Century.&rdquo;{' '}
+            <i>Current Research in Chinese Linguistics</i>, vol. 102, no. 2,
+            July 2023, DOI: 10.29499/CrCL.202307_102(2).0004.
           </blockquote>
           <p class="cite-label">{a.apaLabel}</p>
           <blockquote class="cite">
-            Lai, J., W&ograve;ng, P., Huang, J., &amp; Ng, G.-O. (2023, July). The affiliation of Cantonese at the Sino-Vietnamese border in the late 19th century. <i>Current Research in Chinese Linguistics, 102</i>(2). <a href="https://doi.org/10.29499/CrCL.202307_102(2).0004" target="_blank" rel="noopener">https://doi.org/10.29499/CrCL.202307_102(2).0004</a>
+            Lai, J., W&ograve;ng, P., Huang, J., &amp; Ng, G.-O. (2023, July).
+            The affiliation of Cantonese at the Sino-Vietnamese border in the
+            late 19th century.{' '}
+            <i>Current Research in Chinese Linguistics, 102</i>(2).{' '}
+            <a
+              href="https://doi.org/10.29499/CrCL.202307_102(2).0004"
+              target="_blank"
+              rel="noopener"
+            >
+              https://doi.org/10.29499/CrCL.202307_102(2).0004
+            </a>
           </blockquote>
         </section>
 
@@ -94,11 +132,22 @@ const toc = [
           <h3>{a.githubHeading}</h3>
           <p class="cite-label">{a.mlaLabel}</p>
           <blockquote class="cite">
-            Jyutdict Editorial Board IT Workgroup of Lingnaam Jyutjam. <i>Lagarrue&rsquo;s GoT Cantonese Online Corpus</i>. Version v0.1.0, GitHub, 27 Nov. 2024, <a href={REPO} target="_blank" rel="noopener">{REPO}</a>. Accessed [YOUR ACCESS DATE].
+            Jyutdict Editorial Board IT Workgroup of Lingnaam Jyutjam.{' '}
+            <i>Lagarrue&rsquo;s GoT Cantonese Online Corpus</i>. Version v0.1.0,
+            GitHub, 27 Nov. 2024,{' '}
+            <a href={REPO} target="_blank" rel="noopener">
+              {REPO}
+            </a>
+            . Accessed [YOUR ACCESS DATE].
           </blockquote>
           <p class="cite-label">{a.apaLabel}</p>
           <blockquote class="cite">
-            Jyutdict Editorial Board IT Workgroup of Lingnaam Jyutjam. (2024, November 27). <i>Lagarrue&rsquo;s GoT Cantonese Online Corpus</i> (Version v0.1.0). GitHub. <a href={REPO} target="_blank" rel="noopener">{REPO}</a>
+            Jyutdict Editorial Board IT Workgroup of Lingnaam Jyutjam. (2024,
+            November 27). <i>Lagarrue&rsquo;s GoT Cantonese Online Corpus</i>{' '}
+            (Version v0.1.0). GitHub.{' '}
+            <a href={REPO} target="_blank" rel="noopener">
+              {REPO}
+            </a>
           </blockquote>
         </section>
       </div>
@@ -109,14 +158,46 @@ const toc = [
         <p set:html={contactGithub} />
         <p class="links-title">{a.friendlyLinks}</p>
         <ul class="links">
-          <li>{L.hamzauBaakwaa}
-            <ul><li><a href={U.hamzauBaakwaa} target="_blank" rel="noopener">{U.hamzauBaakwaa}</a></li></ul>
+          <li>
+            {L.hamzauBaakwaa}
+            <ul>
+              <li>
+                <a href={U.hamzauBaakwaa} target="_blank" rel="noopener">
+                  {U.hamzauBaakwaa}
+                </a>
+              </li>
+            </ul>
           </li>
-          <li>{L.jyutdict} <a href={U.jyutdict} target="_blank" rel="noopener">{U.jyutdict}</a></li>
-          <li>{L.lingnaamJyutjamHomepage} <a href={U.lingnaamJyutjamHomepage} target="_blank" rel="noopener">{U.lingnaamJyutjamHomepage}</a></li>
-          <li>{L.jyutpingPlusPlus} <a href={U.jyutpingPlusPlus} target="_blank" rel="noopener">{U.jyutpingPlusPlus}</a></li>
-          <li>{L.jyutping} <a href={U.jyutping} target="_blank" rel="noopener">{U.jyutping}</a></li>
-          <li>{L.jyutpingInputMethod} <a href={U.jyutpingInputMethod} target="_blank" rel="noopener">{U.jyutpingInputMethod}</a></li>
+          <li>
+            {L.jyutdict}{' '}
+            <a href={U.jyutdict} target="_blank" rel="noopener">
+              {U.jyutdict}
+            </a>
+          </li>
+          <li>
+            {L.lingnaamJyutjamHomepage}{' '}
+            <a href={U.lingnaamJyutjamHomepage} target="_blank" rel="noopener">
+              {U.lingnaamJyutjamHomepage}
+            </a>
+          </li>
+          <li>
+            {L.jyutpingPlusPlus}{' '}
+            <a href={U.jyutpingPlusPlus} target="_blank" rel="noopener">
+              {U.jyutpingPlusPlus}
+            </a>
+          </li>
+          <li>
+            {L.jyutping}{' '}
+            <a href={U.jyutping} target="_blank" rel="noopener">
+              {U.jyutping}
+            </a>
+          </li>
+          <li>
+            {L.jyutpingInputMethod}{' '}
+            <a href={U.jyutpingInputMethod} target="_blank" rel="noopener">
+              {U.jyutpingInputMethod}
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -125,7 +206,11 @@ const toc = [
       <nav class="toc" aria-label={ui.toc}>
         <h4>{ui.toc}</h4>
         <ol>
-          {toc.map((x) => <li><a href={"#" + x.id}>{x.label}</a></li>)}
+          {toc.map((x) => (
+            <li>
+              <a href={'#' + x.id}>{x.label}</a>
+            </li>
+          ))}
         </ol>
       </nav>
     </aside>

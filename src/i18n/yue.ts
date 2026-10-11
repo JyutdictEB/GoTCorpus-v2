@@ -105,11 +105,13 @@ export default {
     apaLabel: 'APA：',
     contactHeading: '聯絡我哋',
     contactIntro: '如果有任何疑問或者意見，歡迎透過 {email} 同我哋聯絡。',
-    contactGithub: '本計劃係靠我哋嘅個人熱誠支撐。原始碼可以喺我哋嘅 {githubPage} 度攞到。',
+    contactGithub:
+      '本計劃係靠我哋嘅個人熱誠支撐。原始碼可以喺我哋嘅 {githubPage} 度攞到。',
     githubPageLink: 'GitHub 頁面',
     friendlyLinks: '友好連結：',
     links: {
-      hamzauBaakwaa: 'Hamzau Baakwaa（一個同本資料庫相近、記錄現代方言嘅網上中文字典）：',
+      hamzauBaakwaa:
+        'Hamzau Baakwaa（一個同本資料庫相近、記錄現代方言嘅網上中文字典）：',
       jyutdict: 'Jyutdict：',
       lingnaamJyutjamHomepage: 'Lingnaam Jyutjam 主頁：',
       jyutpingPlusPlus: 'Jyutping++：',
@@ -129,4 +131,4 @@ export default {
     message: '咦，呢度乜都冇……',
     goHome: '返主頁',
   },
-}
+};

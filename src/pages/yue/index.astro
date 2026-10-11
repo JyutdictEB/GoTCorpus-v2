@@ -1,30 +1,45 @@
 ---
-import { Image } from 'astro:assets'
-import Layout from '../../components/Layout.astro'
-import { messages, localizedPath, type Locale } from '../../i18n'
-import { vocabRows, sentenceRows, idiomRows, phonemeRows, introductionRows } from '../../lib/corpus'
-import p12 from '../../data/Lagarrues_p12.jpg'
-import p16 from '../../data/Lagarrues_p16.jpg'
-import p17 from '../../data/Lagarrues_p17.jpg'
+import { Image } from 'astro:assets';
+import Layout from '../../components/Layout.astro';
+import { messages, localizedPath, type Locale } from '../../i18n';
+import {
+  vocabRows,
+  sentenceRows,
+  idiomRows,
+  phonemeRows,
+  introductionRows,
+} from '../../lib/corpus';
+import p12 from '../../data/Lagarrues_p12.jpg';
+import p16 from '../../data/Lagarrues_p16.jpg';
+import p17 from '../../data/Lagarrues_p17.jpg';
 
-const locale: Locale = "yue"
-const t = messages[locale]
-const ui = (t as Record<string, any>).ui as Record<string, string>
-const a = t.about
-const pl = (p: string) => localizedPath(locale, p)
+const locale: Locale = 'yue';
+const t = messages[locale];
+const ui = t.ui;
+const a = t.about;
+const pl = (p: string) => localizedPath(locale, p);
 const plates = [
   { src: p12, caption: t.indexPage.coverCaption, alt: t.indexPage.cover },
   { src: p16, caption: t.indexPage.letter1, alt: t.indexPage.letter1 },
   { src: p17, caption: t.indexPage.letter2, alt: t.indexPage.letter2 },
-]
+];
 const stats = [
   { href: '/vocabulary', n: vocabRows.length, label: t.nav.vocabulary },
   { href: '/sentences', n: sentenceRows.length, label: t.nav.sentences },
   { href: '/idioms', n: idiomRows.length, label: t.nav.idioms },
-  { href: '/phoneme_description', n: phonemeRows.length, label: t.nav.phonemeDescription },
-  { href: '/introduction', n: introductionRows.length, label: t.nav.introduction },
-]
+  {
+    href: '/phoneme_description',
+    n: phonemeRows.length,
+    label: t.nav.phonemeDescription,
+  },
+  {
+    href: '/introduction',
+    n: introductionRows.length,
+    label: t.nav.introduction,
+  },
+];
 ---
+
 <Layout
   locale={locale}
   path="/"
@@ -50,22 +65,44 @@ const stats = [
       <div class="plate-stage">
         {plates.map((p, i) => (
           <figure class="plate-slide" data-slide={i}>
-            <Image src={p.src} alt={p.alt} width={621} format="webp" loading={i === 0 ? "eager" : "lazy"} />
+            <Image
+              src={p.src}
+              alt={p.alt}
+              width={621}
+              format="webp"
+              loading={i === 0 ? 'eager' : 'lazy'}
+            />
             <figcaption class="sr-only">{p.caption}</figcaption>
           </figure>
         ))}
       </div>
       <div class="plate-foot">
-          <div class="plate-bar">
-            <button class="pbtn" type="button" data-plate-prev aria-label="Previous">&#8249;</button>
-            <span class="plate-dots">
-              {plates.map((p, i) => (
-                <button class="pdot" type="button" data-plate-go={i} aria-label={p.caption}></button>
-              ))}
-            </span>
-            <button class="pbtn" type="button" data-plate-next aria-label="Next">&#8250;</button>
-          </div>
-        <p class="plate-cap" data-plate-cap>{plates[0].caption}</p>
+        <div class="plate-bar">
+          <button
+            class="pbtn"
+            type="button"
+            data-plate-prev
+            aria-label="Previous"
+          >
+            &#8249;
+          </button>
+          <span class="plate-dots">
+            {plates.map((p, i) => (
+              <button
+                class="pdot"
+                type="button"
+                data-plate-go={i}
+                aria-label={p.caption}
+              ></button>
+            ))}
+          </span>
+          <button class="pbtn" type="button" data-plate-next aria-label="Next">
+            &#8250;
+          </button>
+        </div>
+        <p class="plate-cap" data-plate-cap>
+          {plates[0].caption}
+        </p>
       </div>
     </div>
   </div>
@@ -73,44 +110,92 @@ const stats = [
   <div class="home-section">
     <h2>{a.contentsHeading}</h2>
     <p>{a.contentsBody}</p>
-    <p class="more"><a href={pl("/about")}>{t.nav.about} &#8594;</a></p>
+    <p class="more">
+      <a href={pl('/about')}>{t.nav.about} &#8594;</a>
+    </p>
   </div>
 
-<script>
-  document.querySelectorAll("[data-plates]").forEach(function (root) {
-    var slides = Array.prototype.slice.call(root.querySelectorAll("[data-slide]"))
-    if (slides.length < 2) return
-    var dots = Array.prototype.slice.call(root.querySelectorAll("[data-plate-go]"))
-    var capEl = root.querySelector("[data-plate-cap]")
-    var caps = slides.map(function (s) { var f = s.querySelector("figcaption"); return f ? f.textContent.trim() : "" })
-    var i = 0, timer = null
-    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  <script>
+    document.querySelectorAll('[data-plates]').forEach(function (root) {
+      const slides = Array.prototype.slice.call(
+        root.querySelectorAll('[data-slide]'),
+      );
+      if (slides.length < 2) return;
+      const dots = Array.prototype.slice.call(
+        root.querySelectorAll('[data-plate-go]'),
+      );
+      const capEl = root.querySelector('[data-plate-cap]');
+      const caps = slides.map(function (s) {
+        const f = s.querySelector('figcaption');
+        return f ? f.textContent.trim() : '';
+      });
+      let i = 0;
+      let timer: ReturnType<typeof setInterval> | null = null;
+      const reduce =
+        window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function show(n) {
-      i = ((n % slides.length) + slides.length) % slides.length
-      slides.forEach(function (s, k) { s.classList.toggle("is-active", k === i) })
+      function show(n: number) {
+        i = ((n % slides.length) + slides.length) % slides.length;
+        slides.forEach(function (s, k) {
+          s.classList.toggle('is-active', k === i);
+        });
+        dots.forEach(function (d, k) {
+          d.classList.toggle('is-active', k === i);
+          if (k === i) {
+            d.setAttribute('aria-current', 'true');
+          } else {
+            d.removeAttribute('aria-current');
+          }
+        });
+        if (capEl) capEl.textContent = caps[i] || '';
+      }
+      function stop() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+      function start() {
+        if (reduce) return;
+        stop();
+        timer = setInterval(function () {
+          show(i + 1);
+        }, 5200);
+      }
+      function go(n: number) {
+        show(n);
+        start();
+      }
+
       dots.forEach(function (d, k) {
-        d.classList.toggle("is-active", k === i)
-        if (k === i) { d.setAttribute("aria-current", "true") } else { d.removeAttribute("aria-current") }
-      })
-      if (capEl) capEl.textContent = caps[i] || ""
-    }
-    function stop() { if (timer) { clearInterval(timer); timer = null } }
-    function start() { if (reduce) return; stop(); timer = setInterval(function () { show(i + 1) }, 5200) }
-    function go(n) { show(n); start() }
-
-    dots.forEach(function (d, k) { d.addEventListener("click", function () { go(k) }) })
-    var prev = root.querySelector("[data-plate-prev]")
-    var next = root.querySelector("[data-plate-next]")
-    if (prev) prev.addEventListener("click", function () { go(i - 1) })
-    if (next) next.addEventListener("click", function () { go(i + 1) })
-    root.addEventListener("mouseenter", stop)
-    root.addEventListener("mouseleave", start)
-    root.addEventListener("focusin", stop)
-    root.addEventListener("focusout", start)
-    document.addEventListener("visibilitychange", function () { if (document.hidden) { stop() } else { start() } })
-    show(0)
-    start()
-  })
-</script>
+        d.addEventListener('click', function () {
+          go(k);
+        });
+      });
+      const prev = root.querySelector('[data-plate-prev]');
+      const next = root.querySelector('[data-plate-next]');
+      if (prev)
+        prev.addEventListener('click', function () {
+          go(i - 1);
+        });
+      if (next)
+        next.addEventListener('click', function () {
+          go(i + 1);
+        });
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+      root.addEventListener('focusin', stop);
+      root.addEventListener('focusout', start);
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+          stop();
+        } else {
+          start();
+        }
+      });
+      show(0);
+      start();
+    });
+  </script>
 </Layout>

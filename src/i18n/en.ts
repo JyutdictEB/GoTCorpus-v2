@@ -75,7 +75,7 @@ export default {
     note: 'Note',
     googleTrans: 'Google Trans.',
     deepLTrans: 'DeepL Trans.',
-    llmTrans: "DeepSeek V4.1 Flash Trans.",
+    llmTrans: 'DeepSeek V4.1 Flash Trans.',
     presumptions: 'Presumptions',
     spellings: 'Spellings',
     descriptions: 'Descriptions',
@@ -114,7 +114,8 @@ export default {
     mlaLabel: 'MLA 8th:',
     apaLabel: 'APA:',
     contactHeading: 'Contact Us',
-    contactIntro: 'For any questions or comments, please contact us at {email}.',
+    contactIntro:
+      'For any questions or comments, please contact us at {email}.',
     contactGithub:
       'This project is supported by our personal passions. Source code is available on our {githubPage}.',
     githubPageLink: 'GitHub page',
@@ -141,4 +142,4 @@ export default {
     message: 'Oops. Nothing here...',
     goHome: 'Go Home',
   },
-}
+};

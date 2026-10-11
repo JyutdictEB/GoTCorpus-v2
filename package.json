@@ -7,7 +7,13 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "check": "astro check",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify": "npm run format:check && npm run lint && npm run check && npm run build"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
@@ -16,6 +22,19 @@
     "vue": "^3.5.41"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@eslint/js": "^10.0.1",
+    "astro-eslint-parser": "^1.4.0",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-astro": "^1.7.0",
+    "prettier": "^3.9.10",
+    "prettier-plugin-astro": "^1.1.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.1",
     "wrangler": "^4.149.0"
+  },
+  "engines": {
+    "node": ">=22.12"
   }
 }
