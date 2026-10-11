@@ -1,0 +1,30 @@
+# Netlify build configuration.
+#
+# The original GoTCorpus project kept these settings only in the Netlify UI,
+# which is why they were easy to lose track of. Keeping them here means the
+# build is reproducible and reviewable.
+
+[build]
+  command = "npm run build"
+  # Astro writes the static site to dist/ (the original Quasar project published dist/spa/)
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Hashed asset filenames are content-addressed, so they can be cached forever.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

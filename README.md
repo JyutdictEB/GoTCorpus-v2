@@ -49,24 +49,27 @@ human**.
 
 ## Deployment
 
-Deployed as a **Workers static-assets site** — Cloudflare serves `dist/` straight from the
-asset store and does not invoke a script for asset hits. The site remains build-time
-rendered HTML; the Worker is only the delivery mechanism.
+Deployed on **Netlify** as a static site: build `npm run build`, publish `dist/`
+(see `netlify.toml`). The original Quasar project published `dist/spa/`.
 
-```bash
-npm run build     # astro build -> dist/
-npm run deploy    # wrangler deploy
-```
+The site is build-time rendered HTML. No server-side runtime is involved.
 
-`wrangler.jsonc` declares `assets.directory` with **no `main`** (static assets only) and binds
-the custom domain `got.jyutjam.org`.
-
-> `netlify.toml` was removed: the project is no longer deployed on Netlify.
+> ### Why not Cloudflare Workers
 >
-> `cf` (the beta Cloudflare CLI) cannot currently build this project — its Astro
+> The corpus is served at `got.jyutdict.org`, a subdomain of `jyutdict.org`, whose
+> Cloudflare zone belongs to a **different Cloudflare account** than the deployment.
+> Cloudflare bans a proxied CNAME that points into another account's zone
+> ([Error 1014](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-1xxx-errors/error-1014/)):
+> it permits CNAMEs within a domain, across zones in the same account, or with
+> Cloudflare for SaaS. Workers custom domains have the same restriction — the zone
+> must be in your own account.
+>
+> A Netlify origin sidesteps this entirely, because the request leaves Cloudflare's
+> network instead of re-entering it under a different account.
+>
+> The `cf` CLI was also evaluated and cannot build this project: its Astro
 > autoconfig injects the `@astrojs/cloudflare` SSR adapter and then fails with
-> `Build Output Specification: no root config found`. `wrangler` is the working path and
-> is a dependency of `cf` anyway.
+> `Build Output Specification: no root config found`.
 
 ## Commands
 

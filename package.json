@@ -7,7 +7,6 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "wrangler deploy",
     "check": "astro check",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -30,8 +29,7 @@
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.1",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.71.1",
-    "wrangler": "^4.149.0"
+    "typescript-eslint": "^8.71.1"
   },
   "engines": {
     "node": ">=22.12"
