@@ -1,87 +1,81 @@
-# GoT Corpus v2 (Astro)
+# GoT Corpus v2
 
-**Lagarrue's GoT Cantonese Online Corpus** — static-site rebuild of
-[GoTCorpus](https://github.com/JyutdictEB/GoTCorpus).
+**Lagarrue's GoT Cantonese Online Corpus** — a static site presenting a digitized
+late-19th-century Cantonese corpus from the Gulf of Tonkin region, in which Cantonese is
+transcribed using the Vietnamese alphabet.
 
-Presents a digitized late-19th-century Cantonese corpus (Gulf of Tonkin region, recorded
-in the Vietnamese alphabet) as **build-time rendered HTML**, so the content is indexable
-by search engines. The original Quasar SPA ships an empty \`<div id="q-app">\` shell and
-requires JavaScript to show anything.
-
-## Why a rewrite
-
-|                        | original (Quasar SPA) | this repo                                |
-| ---------------------- | --------------------- | ---------------------------------------- |
-| HTML content           | empty shell           | full static HTML                         |
-| JavaScript required    | yes                   | no (enhancement script inlined, ~1.4 KB) |
-| \`/yue/\` locale route | 404                   | supported                                |
-| \`sitemap-index.xml\`  | 404                   | generated                                |
-| Locales                | \`en-US\`, \`zh-HK\`  | \`en\`, \`yue\` (written Cantonese)      |
+Live at <https://got.jyutdict.org>.
 
 ## Stack
 
-- [Astro](https://astro.build/) v7 — static output, one HTML file per route
-- Vue integration present but unused by shipped pages (no framework JS on data pages)
-- Self-hosted `woff2` fonts (Fraunces / Literata / IBM Plex Mono, latin + latin-ext + vietnamese subsets)
+- [Astro](https://astro.build/) v7, static output — one HTML file per route
+- Self-hosted `woff2` fonts: Fraunces, Literata, IBM Plex Mono
 - `sharp` image optimisation via `astro:assets`
+- No client framework on shipped pages; the few enhancement scripts are inlined
 
 ## Layout
 
-- \`src/data/\` — corpus JSON (per dataset) plus `llm-translations.json`
-- \`src/lib/corpus.ts\` — column definitions and cell accessors
-- \`src/components/\` — `Layout`, `CorpusTable`, `DataPage`, `AboutPage`
-- \`src/i18n/\` — `en` and `yue` message catalogues
-- \`src/pages/\` — English routes; \`src/pages/yue/\` mirrors them
-- \`docs/design/\` — design and review screenshots
+| Path                | Contents                                                        |
+| ------------------- | --------------------------------------------------------------- |
+| `src/data/`         | Corpus JSON, one file per dataset, plus `llm-translations.json` |
+| `src/lib/corpus.ts` | Column definitions and cell accessors                           |
+| `src/components/`   | `Layout`, `CorpusTable`, `DataPage`, `AboutPage`                |
+| `src/i18n/`         | `en` and `yue` message catalogues                               |
+| `src/pages/`        | English routes; `src/pages/yue/` mirrors them                   |
+| `docs/design/`      | Design and review screenshots                                   |
 
-## Translation overlay
+## Data
 
-\`src/data/llm-translations.json\` holds French → English and French → Cantonese glosses
-for the four datasets whose **French text is the source** (\`introduction\`,
-\`phoneme_description\`, \`sentences\`, \`idioms\`), 700 entries in total.
+Five datasets, loaded at build time:
 
-The vocabulary table is deliberately **not** translated: its "Corresponding Characters"
-column already gives the answer, and measurement showed ~60% of machine glosses merely
-repeated it.
+| Dataset                    | Entries |
+| -------------------------- | ------- |
+| `vocabulary.json`          | 2,490   |
+| `sentences.json`           | 194     |
+| `idioms.json`              | 45      |
+| `phoneme_description.json` | 77      |
+| `introduction.json`        | 34      |
 
-\`meta.reviewed\` is currently \`false\` — **these translations have not been checked by a
-human**.
+Columns carry a provenance marker: Google Translate, DeepL, DeepSeek, or human-corrected.
+Bibliographic columns (`Index`, `PDF Page`, `Original Page`) and the machine-translation
+columns are collapsed by default and can be enabled from the column picker.
 
-## Deployment
+## Translations
 
-Deployed on **Netlify** as a static site: build `npm run build`, publish `dist/`
-(see `netlify.toml`). The original Quasar project published `dist/spa/`.
+`src/data/llm-translations.json` holds French → English and French → Cantonese glosses for
+the four datasets whose French text is the source: `introduction`,
+`phoneme_description`, `sentences` and `idioms`. 700 entries.
 
-The site is build-time rendered HTML. No server-side runtime is involved.
+The vocabulary table has no machine-translation column, because its "Corresponding
+Characters" column already gives the answer for every entry.
 
-> ### Why not Cloudflare Workers
->
-> The corpus is served at `got.jyutdict.org`, a subdomain of `jyutdict.org`, whose
-> Cloudflare zone belongs to a **different Cloudflare account** than the deployment.
-> Cloudflare bans a proxied CNAME that points into another account's zone
-> ([Error 1014](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-1xxx-errors/error-1014/)):
-> it permits CNAMEs within a domain, across zones in the same account, or with
-> Cloudflare for SaaS. Workers custom domains have the same restriction — the zone
-> must be in your own account.
->
-> A Netlify origin sidesteps this entirely, because the request leaves Cloudflare's
-> network instead of re-entering it under a different account.
->
-> The `cf` CLI was also evaluated and cannot build this project: its Astro
-> autoconfig injects the `@astrojs/cloudflare` SSR adapter and then fails with
-> `Build Output Specification: no root config found`.
+`meta.reviewed` is `false`: these translations have **not** been checked by a human.
 
 ## Commands
 
-\`\`\`bash
+```bash
 npm install
 npm run dev # dev server
 npm run build # static output in dist/
 npm run preview # serve the built output
-\`\`\`
+```
+
+Quality gates, also run by CI:
+
+```bash
+npm run format:check
+npm run lint
+npm run check # astro check (types)
+npm run verify # all of the above plus build
+```
 
 Requires Node >= 22.12.
 
+## Deployment
+
+Netlify, configured by `netlify.toml`: build `npm run build`, publish `dist/`.
+
 ## Known issues
 
-See \`GoTCorpus/docs/known-issues.md\` for the full register (SEO / DATA / UI / ENG items).
+See [`docs/known-issues.md`](https://github.com/JyutdictEB/GoTCorpus/blob/main/docs/known-issues.md)
+in the `GoTCorpus` repository for the issue register (SEO / DATA / UI / ENG).
