@@ -113,13 +113,12 @@ export default {
     githubPageLink: 'GitHub 頁面',
     friendlyLinks: '友好連結：',
     links: {
-      hamzauBaakwaa:
-        'Hamzau Baakwaa（一個同本資料庫相近、記錄現代方言嘅網上中文字典）：',
-      jyutdict: 'Jyutdict：',
-      lingnaamJyutjamHomepage: 'Lingnaam Jyutjam 主頁：',
-      jyutpingPlusPlus: 'Jyutping++：',
-      jyutping: 'Jyutping：',
-      jyutpingInputMethod: 'Jyutping 輸入法：',
+      hamzauBaakwaa: '欽州白話網：',
+      jyutdict: '泛粵典：',
+      lingnaamJyutjamHomepage: '嶺南粵音主頁：',
+      jyutpingPlusPlus: '擴展粵拼方案 Jyutping++：',
+      jyutping: '粵拼 Jyutping：',
+      jyutpingInputMethod: '粵拼輸入法：',
     },
     linkUrls: {
       hamzauBaakwaa: 'https://hamzau.com',
