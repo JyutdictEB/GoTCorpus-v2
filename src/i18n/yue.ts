@@ -113,7 +113,8 @@ export default {
     githubPageLink: 'GitHub 頁面',
     friendlyLinks: '友好連結：',
     links: {
-      hamzauBaakwaa: '欽州白話網：',
+      hamzauBaakwaa:
+        '欽州白話網（網上欽州白話詞典，記錄嘅係同本語料庫相近嘅現代方言）：',
       jyutdict: '泛粵典：',
       lingnaamJyutjamHomepage: '嶺南粵音主頁：',
       jyutpingPlusPlus: '擴展粵拼方案 Jyutping++：',
